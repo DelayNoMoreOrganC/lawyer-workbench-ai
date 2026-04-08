@@ -34,9 +34,10 @@ async def health_check():
     return {"status": "healthy", "database": "connected"}
 
 # 新版本路由
-from app.api_v2 import cases, tasks, dossiers, events, users, ai_document, ai_chat
+from app.api_v2 import cases, tasks, dossiers, events, users, ai_document, ai_chat, auth
 
 # 注册新版本API路由
+app.include_router(auth.router, prefix="/api/v2/auth", tags=["用户认证 v2"])
 app.include_router(cases.router, prefix="/api/v2/cases", tags=["案件管理 v2"])
 app.include_router(tasks.router, prefix="/api/v2/tasks", tags=["待办事项 v2"])
 app.include_router(dossiers.router, prefix="/api/v2/dossiers", tags=["电子卷宗 v2"])

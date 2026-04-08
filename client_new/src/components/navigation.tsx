@@ -1,8 +1,9 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface NavigationItem {
   name: string;
@@ -40,6 +41,15 @@ const navigationItems: NavigationItem[] = [
 
 export function Navigation() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, isAuthenticated, logout } = useAuth();
+
+  const handleLogout = () => {
+    if (confirm("确定要退出登录吗？")) {
+      logout();
+      router.push("/login");
+    }
+  };
 
   return (
     <nav className="border-b border-gray-200 bg-white">
@@ -81,15 +91,48 @@ export function Navigation() {
 
           {/* User Actions */}
           <div className="flex items-center gap-3">
-            <button className="text-sm text-gray-600 hover:text-gray-900">
-              帮助
-            </button>
-            <div className="h-4 w-px bg-gray-300"></div>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs font-medium">
-                L
-              </div>
-            </div>
+            {isAuthenticated ? (
+              <>
+                <button className="text-sm text-gray-600 hover:text-gray-900">
+                  帮助
+                </button>
+                <div className="h-4 w-px bg-gray-300"></div>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs font-medium">
+                    {user?.full_name?.charAt(0) || user?.username?.charAt(0) || "U"}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium text-gray-900">
+                      {user?.full_name || user?.username}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      {user?.role === "admin" ? "管理员" : user?.role === "lawyer" ? "律师" : "助理"}
+                    </span>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="text-sm text-gray-600 hover:text-gray-900 ml-2"
+                  >
+                    退出
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="text-sm text-gray-600 hover:text-gray-900"
+                >
+                  登录
+                </Link>
+                <Link
+                  href="/register"
+                  className="text-sm bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700"
+                >
+                  注册
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
