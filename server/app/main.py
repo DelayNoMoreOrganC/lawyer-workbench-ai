@@ -35,7 +35,7 @@ async def health_check():
 
 # 新版本路由
 from app.api_v2 import cases, tasks, dossiers, events, users, ai_document, ai_chat, auth, auth_debug, test_auth
-from app.api_v2 import finance, customers, test_ai
+from app.api_v2 import finance, customers, test_ai, smart_intake, smart_schedule, smart_forms
 
 # 注册新版本API路由
 app.include_router(test_auth.router, prefix="/api/v2/test", tags=["认证测试 v2"])
@@ -51,6 +51,10 @@ app.include_router(ai_document.router, prefix="/api/v2/ai", tags=["AI文档识�
 app.include_router(ai_chat.router, prefix="/api/v2/ai/chat", tags=["AI聊天助手 v2"])
 app.include_router(finance.router, prefix="/api/v2/finance", tags=["财务管理 v2"])
 app.include_router(customers.router, prefix="/api/v2/customers", tags=["客户管理 v2"])
+# AI减负功能路由
+app.include_router(smart_intake.router, prefix="/api/v2/smart/intake", tags=["智能建档 v2"])
+app.include_router(smart_schedule.router, prefix="/api/v2/smart/schedule", tags=["智能日程 v2"])
+app.include_router(smart_forms.router, prefix="/api/v2/smart/forms", tags=["智能表单 v2"])
 
 # 保留旧版本路由（向后兼容）
 try:

@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     # GLM配置 (智谱AI)
     GLM_API_KEY: str = "84c4d1dc55e24ae897a41310cc04b36b.t1LLx5SfmxOqe1qk"
     GLM_API_URL: str = "https://open.bigmodel.cn/api/paas/v4/chat/completions"
-    GLM_MODEL: str = "glm-5.1"  # 最新GLM-5.1模型，性能更强
+    GLM_MODEL: str = "glm-5.1"  # 最新旗舰模型，200K上下文，128K输出，对齐Claude Opus 4.6
 
     # DeepSeek配置 (备用)
     DEEPSEEK_API_KEY: str = ""
