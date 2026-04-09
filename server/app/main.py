@@ -35,10 +35,11 @@ async def health_check():
 
 # 新版本路由
 from app.api_v2 import cases, tasks, dossiers, events, users, ai_document, ai_chat, auth, auth_debug, test_auth
-from app.api_v2 import finance, customers
+from app.api_v2 import finance, customers, test_ai
 
 # 注册新版本API路由
 app.include_router(test_auth.router, prefix="/api/v2/test", tags=["认证测试 v2"])
+app.include_router(test_ai.router, prefix="/api/v2/ai-test", tags=["AI功能测试 v2"])
 app.include_router(auth.router, prefix="/api/v2/auth", tags=["用户认证 v2"])
 app.include_router(auth_debug.router, prefix="/api/v2/auth-debug", tags=["用户认证调试 v2"])
 app.include_router(cases.router, prefix="/api/v2/cases", tags=["案件管理 v2"])

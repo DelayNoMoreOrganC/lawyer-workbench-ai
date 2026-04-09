@@ -65,7 +65,16 @@
       "Bash(python init_db.py init)",
       "Bash(/Users/juno/Downloads/lawyer-workbench-ai-main/client_new/.env.local:*)",
       "Bash(kill:*)",
-      "Bash(.gitignore:*)"
+      "Bash(.gitignore:*)",
+      "Bash(ssh-keygen:*)",
+      "Bash(ssh -T git@github.com -o StrictHostKeyChecking=no)",
+      "Bash(gh --version)",
+      "Bash(git bundle:*)",
+      "Bash(zip:*)",
+      "Bash(git config:*)",
+      "Bash(tar:*)",
+      "Bash(git stash:*)",
+      "Bash(python:*)"
     ]
   }
 }

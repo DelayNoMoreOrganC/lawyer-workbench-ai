@@ -2,8 +2,11 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import List, Optional
 import json
+from app.core.ai_service import get_ai_service
+from app.core.legal_prompts import get_legal_system_prompt, build_legal_user_prompt
 
 router = APIRouter()
+ai_service = get_ai_service()
 
 
 class ChatMessage(BaseModel):
@@ -159,23 +162,70 @@ def analyze_user_message(message: str) -> str:
 
 @router.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
-    """AI聊天接口"""
-    try:
-        # 分析用户消息并生成回复
-        ai_response = analyze_user_message(request.message)
+    """AI聊天接口 - 使用真正的GLM AI模型"""
 
+    try:
         # 构建对话历史
         conversation_history = request.conversation_history or []
+
+        # 判断任务类型
+        task_type = determine_task_type(request.message)
+
+        # 获取对应的系统提示词
+        system_prompt = get_legal_system_prompt(task_type)
+
+        # 调用AI服务生成回复
+        ai_response = await ai_service.chat(
+            user_message=request.message,
+            conversation_history=conversation_history,
+            system_prompt=system_prompt,
+            task_type=task_type
+        )
+
+        # 更新对话历史
         conversation_history.append(ChatMessage(role="user", content=request.message))
-        conversation_history.append(ChatMessage(role="assistant", content=ai_response.strip()))
+        conversation_history.append(ChatMessage(role="assistant", content=ai_response))
 
         return ChatResponse(
-            response=ai_response.strip(),
+            response=ai_response,
             conversation_history=conversation_history
         )
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"聊天服务异常: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"AI聊天服务异常: {str(e)}")
+
+
+def determine_task_type(message: str) -> str:
+    """
+    根据用户消息判断任务类型
+
+    Args:
+        message: 用户消息
+
+    Returns:
+        任务类型
+    """
+    message_lower = message.lower()
+
+    # 文书生成相关
+    if any(keyword in message for keyword in ["起诉状", "答辩状", "上诉状", "代理词", "合同", "协议", "书写", "起草"]):
+        return "document_generation"
+
+    # 案件分析相关
+    elif any(keyword in message for keyword in ["分析案件", "案件分析", "案情分析", "案件评估", "胜诉", "败诉"]):
+        return "case_analysis"
+
+    # 证据相关
+    elif any(keyword in message for keyword in ["证据", "举证", "质证", "鉴定", "勘验"]):
+        return "evidence_evaluation"
+
+    # 调解相关
+    elif any(keyword in message for keyword in ["调解", "和解", "协商", "谈判"]):
+        return "mediation"
+
+    # 法律咨询（默认）
+    else:
+        return "legal_consultation"
 
 
 @router.get("/templates")

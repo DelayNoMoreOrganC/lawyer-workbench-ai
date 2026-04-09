@@ -13,11 +13,19 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
     # AI配置
-    AI_MODE: str = "ollama"  # deepseek or ollama
+    AI_MODE: str = "glm"  # glm, deepseek or ollama
+
+    # GLM配置 (智谱AI)
+    GLM_API_KEY: str = "84c4d1dc55e24ae897a41310cc04b36b.t1LLx5SfmxOqe1qk"
+    GLM_API_URL: str = "https://open.bigmodel.cn/api/paas/v4/chat/completions"
+    GLM_MODEL: str = "glm-5.1"  # 最新GLM-5.1模型，性能更强
+
+    # DeepSeek配置 (备用)
     DEEPSEEK_API_KEY: str = ""
     DEEPSEEK_API_URL: str = "https://api.deepseek.com/v1"
     DEEPSEEK_MODEL: str = "deepseek-chat"
 
+    # Ollama配置 (本地备用)
     OLLAMA_BASE_URL: str = "http://localhost:11434"
     OLLAMA_MODEL: str = "qwen3:8b"
 
