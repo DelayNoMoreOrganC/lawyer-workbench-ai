@@ -6,6 +6,8 @@ from app.models.dossier import Dossier
 from app.models.event import Event
 from app.models.ai_assist_log import AIAssistLog
 from app.models.user_new import User
+from app.models.finance import Expense, AttorneyFee, Payment, Invoice
+from app.models.customer import Customer, Communication, case_customer_association
 
 __all__ = [
     "Base",
@@ -18,5 +20,12 @@ __all__ = [
     "Dossier",
     "Event",
     "AIAssistLog",
-    "User"
+    "User",
+    "Expense",
+    "AttorneyFee",
+    "Payment",
+    "Invoice",
+    "Customer",
+    "Communication",
+    "case_customer_association"
 ]

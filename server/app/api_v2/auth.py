@@ -14,6 +14,23 @@ from app.core.security import (
     get_current_user, get_current_active_user, require_admin
 )
 
+
+# 辅助函数：将User对象转换为UserResponse
+def user_to_response(user: User) -> dict:
+    """将User对象转换为响应字典"""
+    return {
+        "id": user.id,
+        "username": user.username,
+        "full_name": user.full_name,
+        "email": user.email,
+        "phone": user.phone,
+        "role": user.role,
+        "department": user.department,
+        "is_active": user.is_active,
+        "last_login": user.last_login.isoformat() if user.last_login else None,
+        "created_at": user.created_at.isoformat() if user.created_at else None
+    }
+
 router = APIRouter()
 security = HTTPBearer()
 
@@ -66,8 +83,24 @@ async def login_user(user_credentials: UserLogin, db: Session = Depends(get_db))
     # 查找用户
     user = db.query(User).filter(User.username == user_credentials.username).first()
 
-    # 验证用户和密码
-    if not user or not verify_password(user_credentials.password, user.password_hash):
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="用户名或密码错误",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    # 验证密码
+    try:
+        is_valid = verify_password(user_credentials.password, user.password_hash)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="用户名或密码错误",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    if not is_valid:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="用户名或密码错误",
@@ -95,7 +128,7 @@ async def login_user(user_credentials: UserLogin, db: Session = Depends(get_db))
     return {
         "access_token": access_token,
         "token_type": "bearer",
-        "user": user
+        "user": user_to_response(user)
     }
 
 

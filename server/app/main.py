@@ -34,10 +34,13 @@ async def health_check():
     return {"status": "healthy", "database": "connected"}
 
 # 新版本路由
-from app.api_v2 import cases, tasks, dossiers, events, users, ai_document, ai_chat, auth
+from app.api_v2 import cases, tasks, dossiers, events, users, ai_document, ai_chat, auth, auth_debug, test_auth
+from app.api_v2 import finance, customers
 
 # 注册新版本API路由
+app.include_router(test_auth.router, prefix="/api/v2/test", tags=["认证测试 v2"])
 app.include_router(auth.router, prefix="/api/v2/auth", tags=["用户认证 v2"])
+app.include_router(auth_debug.router, prefix="/api/v2/auth-debug", tags=["用户认证调试 v2"])
 app.include_router(cases.router, prefix="/api/v2/cases", tags=["案件管理 v2"])
 app.include_router(tasks.router, prefix="/api/v2/tasks", tags=["待办事项 v2"])
 app.include_router(dossiers.router, prefix="/api/v2/dossiers", tags=["电子卷宗 v2"])
@@ -45,6 +48,8 @@ app.include_router(events.router, prefix="/api/v2/events", tags=["日程安排 v
 app.include_router(users.router, prefix="/api/v2/users", tags=["用户管理 v2"])
 app.include_router(ai_document.router, prefix="/api/v2/ai", tags=["AI文档识别 v2"])
 app.include_router(ai_chat.router, prefix="/api/v2/ai/chat", tags=["AI聊天助手 v2"])
+app.include_router(finance.router, prefix="/api/v2/finance", tags=["财务管理 v2"])
+app.include_router(customers.router, prefix="/api/v2/customers", tags=["客户管理 v2"])
 
 # 保留旧版本路由（向后兼容）
 try:
